@@ -47,11 +47,11 @@ if ( $last_stamp ) {
   my $t_since = time() - $last_stamp;
   my $changes = $epoch - $last_epoch;
   my $rate = ($changes == 0) ? 0 : ($t_since / $changes);
-  if ( $rate >= $crit ) {
+  if ( $rate > $crit ) {
     print "CRITICAL: rate=$rate\n";
     $return = 2;
   }
-  elsif ( $rate >= $warn ) {
+  elsif ( $rate > $warn ) {
     print "WARNING: rate=$rate\n";
     $return = 1;
   }
