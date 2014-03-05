@@ -55,7 +55,7 @@ foreach my $row (keys %{$assigned{'row'}}) {
 }
 
 
-if ( $critical = 1 ) {
+if ( $critical == 1 ) {
   print "We're mis-weighted!\n";
   exit(2);
 }
