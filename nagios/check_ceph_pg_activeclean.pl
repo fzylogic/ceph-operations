@@ -13,11 +13,11 @@ foreach my $a (@active_pgs) {
 }
 
 if ( $total_pgs == $active ) {
-  print 'OK: ' . $pg_stat;
+  print $pg_stat;
   exit(0);
 }
 elsif ( $total_pgs > $active ) {
-  print 'CRIT: ' . $pg_stat;
+  print $pg_stat;
   exit(2);
 }
 else {
