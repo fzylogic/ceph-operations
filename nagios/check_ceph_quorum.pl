@@ -3,6 +3,8 @@
 use strict;
 use JSON;
 use Data::Dumper;
+use Sys::Hostname;
+my $hostname = hostname;
 
 my $warn = shift || "0"; ## By default, let's alarm if *any* elections happen
 my $crit = shift || "0";
@@ -24,8 +26,11 @@ sub get_last_status {
 }
 
 sub get_cur_status {
-  open(CEPH, "/usr/bin/ceph mon_status|");
-  my $status_json = <CEPH>;
+  open(CEPH, "/usr/bin/ceph --admin-daemon /var/run/ceph/ceph-mon.$hostname.asok mon_status|");
+  my $status_json;
+  while (<CEPH>) {
+    $status_json .= $_;
+  }
   close(CEPH);
   my $json = JSON->new->allow_nonref;
   my $status = $json->decode( $status_json );
