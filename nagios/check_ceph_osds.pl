@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 use strict;
+my @broken;
 
 sub critical {
   my $error = shift;
@@ -18,9 +19,14 @@ while ( my $osd = readdir(OSDS) ) {
   next if $osd =~ /^\./;
   my ($osd_num) = $osd =~ /ceph-([0-9]+)/;
   next unless $osd_num =~ /^\d+$/;
-  open(ADMIN, "/usr/bin/ceph --admin-daemon /var/run/ceph/ceph-osd.$osd_num.asok version|") || critical("Can't get version info from admin socket");
-  my $ver = <ADMIN>;
+  open(ADMIN, "/usr/bin/ceph --admin-daemon /var/run/ceph/ceph-osd.$osd_num.asok version 2>&1|");
   close(ADMIN);
+  if ( $? != 0 ) {
+    push(@broken, $osd_num);
+  }
+}
+closedir(OSDS);
+if ( scalar(@broken) ) {
+  critical("Broken OSDs: " . join(',', @broken));
 }
 ok("All OSDs responding");
-closedir(OSDS);
